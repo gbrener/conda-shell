@@ -8,11 +8,11 @@ Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda pac
 
 In a nutshell (pun intended), `conda-shell` has the following goals:
 
-- Maintain feature-parity with `nix-shell`, to the extent that conda supports it
 - Make conda environments as "cheap" as possible to create and reuse, based on package specs rather than environment names
-- Treat conda environments in a similar fashion as containers, i.e.
+- Treat conda environments in a similar fashion (philosophically) to containers, i.e.
     - Enable execution of arbitrary commands in a predefined environment, or
     - Activate an environment as an interactive subshell
+- Maintain feature-parity with `nix-shell`, to the extent that conda supports it
 
 Some auxillary benefits:
 
@@ -88,7 +88,7 @@ conda create -n shell_abc python=3.6 numpy=1.13
 source activate shell_abc
 ```
 
-One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering and exiting the `conda-shell` environment automatically activate/deactivate it, saving you some typing.
+One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering/exiting the `conda-shell` environment automatically activates/deactivates it, saving you some typing.
 
 ### In a script
 
@@ -109,7 +109,7 @@ Make the script executable:
 chmod +x np-ver-check.py
 ```
 
-Run it and let `conda-shell` do its magic!
+Run it and let `conda-shell` work its magic!
 
 ```
 ./np-ver-check.py
@@ -121,7 +121,7 @@ Remove all environments created by `conda-shell`:
 
 In `bash` shell, for example:
 ```
-for e in `conda info --envs | awk '/shell_/ {print $2}'`; do
+for e in `conda info --envs | awk '/\/shell_/ {print $2}'`; do
   conda env remove -n `basename $e`;
 done
 ```
@@ -142,4 +142,4 @@ Q: Why is this not a part of `conda` (like `nix-shell` is a part of `nix`)?
 > A: First of all, `conda-shell` is still a very immature tool. Second, `conda-shell` is not (yet?) compatible with Windows.
 
 Q: Does this project have all the features of `nix-shell`?
-> A: No. It may never reach the full functionality of `nix-shell`, since `nix` is a different package manager than `conda` with different ambitions. However this is a step in that direction.
+> A: No. It may never reach the full functionality of `nix-shell`, since `nix` is a package manager with different ambitions than `conda`. However this is a step in that direction.
