@@ -44,8 +44,6 @@ cd conda-shell
 python setup.py install
 ```
 
-To deactivate the dev environment, type `source deactivate`.
-
 ## Usage
 
 `conda-shell` is designed to be used in (at least) three contexts:
