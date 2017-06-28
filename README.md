@@ -1,27 +1,31 @@
 # conda-shell
 
-Port of the `nix-shell` command for the [conda package manager](https://github.com/conda/conda). Nix-shell is a part of the [nix package manager](https://github.com/NixOS/nix).
+Port of the `nix-shell` command for the [conda package manager](https://github.com/conda/conda). `nix-shell` is a part of the [nix package manager](https://github.com/NixOS/nix).
 
-**Note: `conda-shell` is still in _alpha_. GitHub issues (bug reports, feature requests, etc) and PRs are welcome!**
+**Note: `conda-shell` is still in _alpha_. GitHub issues (bug reports, feature requests, etc) and PRs are welcome.**
 
 ## Purpose
 
 In a nutshell (pun intended), conda-shell has the following goals:
 
-    - Make conda environments as "cheap" as possible to create and reuse
-    - Treat conda environments in a similar fashion to containers, i.e.
-        - Enable execution of arbitrary commands in a predefined environment, or
-        - Activate an environment as an interactive subshell
-    - Maintain feature-parity with nix-shell, to the extent that conda supports it
+- Make conda environments as "cheap" as possible to create and reuse
+- Treat conda environments in a similar fashion to containers, i.e.
+    - Enable execution of arbitrary commands in a predefined environment, or
+    - Activate an environment as an interactive subshell
+- Maintain feature-parity with nix-shell, to the extent that conda supports it
 
 Some auxillary benefits:
 
-    - Distribute a single script (including its versioned dependencies), without creating a conda package nor an environment.yml
-    - No need to memorize the names of your "throwaway" conda environments
-    - No need to type `source activate ...` and `source deactivate`
-    - Quickly find and activate existing environments based on package specs
+- Distribute a single script (including its versioned dependencies), without creating a conda package nor an environment.yml
+- No need to memorize the names of your "throwaway" conda environments
+- No need to type `source activate ...` and `source deactivate`
+- Quickly find and activate existing environments based on package specs
 
 ## Installation
+
+There are two installation methods:
+- [With conda](#with-conda)
+- [From source](#from-source)
 
 ### With `conda`
 
@@ -47,9 +51,9 @@ To deactivate the dev environment, type `source deactivate`.
 
 `conda-shell` can be used in three contexts:
 
-    - Running arbitrary commands in a conda environment
-    - Starting an interactive shell inside of a conda environment
-    - Using `conda-shell` inside a script
+- [Running arbitrary commands in a conda environment](#arbitrary-commands)
+- [Starting an interactive shell inside of a conda environment](#interactive-shell)
+- [Using `conda-shell` inside of a script](#inside-a-script)
 
 The following examples assume a desired environment of `Python 3.6` and `NumPy 1.13`.
 
@@ -87,9 +91,9 @@ source activate shell_abc
 
 One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, exiting the `conda-shell` environment automatically deactivates it, saving you two `source` commands.
 
-### Shebang
+### In a script
 
-Create a file called `np-ver-check.py`:
+Create a file called `np-ver-check.py`. Note the `-i` command, indicating that the `python` program should be used to interpret the file (similar to typing `#!/usr/bin/env python`):
 
 ```
 #!/usr/bin/env conda-shell
@@ -100,13 +104,13 @@ import numpy as np
 print(np.__version__)
 ```
 
-Then make the script executable:
+Make the script executable:
 
 ```
 chmod +x np-ver-check.py
 ```
 
-Finally, run it and watch `conda-shell` go!
+Run it and let `conda-shell` do its magic!
 
 ```
 ./np-ver-check.py
@@ -114,10 +118,13 @@ Finally, run it and watch `conda-shell` go!
 
 ## FAQ
 
+Q: Does this project have all the features of `nix-shell`?
+A: No. It may never reach the full functionality of `nix-shell`, since `nix` is a different package manager than `conda` with different ambitions. However this is a step in that direction.
+
 Q: Have you seen [conda-execute](https://github.com/conda-tools/conda-execute)?
-A: On the surface, `conda-shell` may look like it offers very similar features as `conda-execute`. However there are a number of key differences:
+A: On the surface, `conda-shell` may look like it offers very similar features as `conda-execute`. However there are a number of important differences:
     - `conda-shell` has different goals than `conda-execute` (see above)
-    - Syntactically, `conda-shell`'s use of the [shebang line]() (borrowed from `nix-shell`'s syntax) is more terse and reuses the CLI from `conda install`. We avoid inventing (and maintaining) a new YAML-based syntax for declaring package dependencies
+    - Syntactically, `conda-shell`'s use of the [shebang line](https://en.wikipedia.org/wiki/Shebang_(Unix)) (borrowed from `nix-shell`'s syntax) is more terse and reuses the CLI from the `conda install` command. This avoids inventing (and maintaining) a new YAML-based syntax for declaring package dependencies
     - `conda-shell` does not need to be installed into the root environment
     - `conda-shell` offers container-like features, such as executing arbitrary commands and acting as an interactive subshell
 
