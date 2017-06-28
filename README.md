@@ -9,7 +9,7 @@ Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda pac
 In a nutshell (pun intended), `conda-shell` has the following goals:
 
 - Make conda environments as "cheap" as possible to create and reuse
-- Treat conda environments in a similar fashion to containers, i.e.
+- Treat conda environments in a similar fashion as containers, i.e.
     - Enable execution of arbitrary commands in a predefined environment, or
     - Activate an environment as an interactive subshell
 - Maintain feature-parity with nix-shell, to the extent that conda supports it
@@ -89,7 +89,7 @@ conda create -n shell_abc python=3.6 numpy=1.13
 source activate shell_abc
 ```
 
-One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, exiting the `conda-shell` environment automatically deactivates it, saving you two `source` commands.
+One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, exiting the `conda-shell` environment automatically deactivates it, saving you some typing.
 
 ### In a script
 
