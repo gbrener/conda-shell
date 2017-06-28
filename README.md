@@ -22,17 +22,10 @@ Some auxillary benefits:
 
 ## Installation
 
-There are two methods of installation:
-- [With conda](#with-conda)
+Currently there is only one method of installation:
 - [From source](#from-source)
 
-### With `conda`
-
-Assuming [Miniconda or Anaconda (aka "conda")](https://conda.io/docs/install/quick.html) is installed, type:
-
-```
-conda install -c gbrener conda-shell
-```
+Soon there will be two (via `conda install`).
 
 ### From source
 
