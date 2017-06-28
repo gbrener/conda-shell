@@ -2,7 +2,7 @@
 
 Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda package manager](https://github.com/conda/conda).
 
-**Note: `conda-shell` is still in _alpha_, and only tested on Linux and OSX. GitHub issues (bug reports, feature requests, etc) and PRs are welcome.**
+**Note: `conda-shell` is still in _alpha_, and only tested on Linux and OSX, Python v2.7/3.5/3.6. GitHub issues (bug reports, feature requests, etc) and PRs are welcome.**
 
 ## Purpose
 
@@ -37,11 +37,11 @@ conda install -c gbrener conda-shell
 
 ### From source
 
+Alternatively, `conda-shell` may be installed from source:
+
 ```
 git clone https://github.com/gbrener/conda-shell.git
 cd conda-shell
-conda env create -f requirements.txt -n conda-shell
-source activate conda-shell # Activate dev environment
 python setup.py install
 ```
 
@@ -49,7 +49,7 @@ To deactivate the dev environment, type `source deactivate`.
 
 ## Usage
 
-`conda-shell` can be used in three contexts:
+`conda-shell` is designed to be used in (at least) three contexts:
 
 - [Running arbitrary commands in a conda environment](#arbitrary-commands)
 - [Starting an interactive shell inside of a conda environment](#interactive-shell)

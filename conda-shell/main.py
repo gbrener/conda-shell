@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import sys
 import os
@@ -36,7 +38,8 @@ def parse_script_cmds(script_fpath):
                         break
             else:
                 break
-    install_cmd = ['conda', 'install', '-y', '-n', random_env_name, *args]
+    install_cmd = ['conda', 'install', '-y', '-n', random_env_name]
+    install_cmd.extend(args)
     return install_cmd, interpreter, random_env_name
 
 
@@ -127,7 +130,7 @@ def run_cmds_in_env(install_cmd, exec_cmd, env_name, shebang=True, run=None):
                                       env=env_vars,
                                       universal_newlines=True)
             else:
-                prompt = f'[{os.path.basename(env_dpath)}]: '
+                prompt = '[{}]: '.format(os.path.basename(env_dpath))
                 InteractiveShell(prompt, env=env_vars).cmdloop()
             return
 
@@ -155,7 +158,7 @@ def run_cmds_in_env(install_cmd, exec_cmd, env_name, shebang=True, run=None):
                               env=env_vars,
                               universal_newlines=True)
     else:
-        prompt = f'[{os.path.basename(env_dpath)}]: '
+        prompt = '[{}]: '.format(os.path.basename(env_dpath))
         InteractiveShell(prompt, env=env_vars).cmdloop()
 
 
@@ -175,14 +178,15 @@ def main(argv):
             raise ValueError('When called from a shebang line, please provide'
                              'the --interpeter (or -i) argument to'
                              'conda-shell')
-        exec_cmd = [interpreter, script_fpath, *argv[2:]]
+        exec_cmd = [interpreter, script_fpath]
+        exec_cmd.extend(argv[2:])
     else:
         if not argv[1:]:
             raise ValueError('No arguments provided.')
 
         random_env_name = rand_env_name()
-        install_cmd = ['conda', 'install', '-y', '-n', random_env_name,
-                       *argv[1:]]
+        install_cmd = ['conda', 'install', '-y', '-n', random_env_name]
+        install_cmd.extend(argv[1:])
         exec_cmd = []
 
         for partct, part in enumerate(install_cmd):
