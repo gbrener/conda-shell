@@ -1,2 +1,2 @@
-with open('VERSION', 'r') as ver_fd:
-    __version__ = ver_fd.read().strip()
+# TODO: parameterize this so that it uses VERSION file after installation
+__version__ = '0.0.1dev1'
