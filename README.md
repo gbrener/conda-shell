@@ -1,12 +1,12 @@
 # conda-shell
 
-Port of the `nix-shell` command for the [conda package manager](https://github.com/conda/conda). `nix-shell` is a part of the [nix package manager](https://github.com/NixOS/nix).
+Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda package manager](https://github.com/conda/conda).
 
-**Note: `conda-shell` is still in _alpha_. GitHub issues (bug reports, feature requests, etc) and PRs are welcome.**
+**Note: `conda-shell` is still in _alpha_, and only tested on Linux and OSX. GitHub issues (bug reports, feature requests, etc) and PRs are welcome.**
 
 ## Purpose
 
-In a nutshell (pun intended), conda-shell has the following goals:
+In a nutshell (pun intended), `conda-shell` has the following goals:
 
 - Make conda environments as "cheap" as possible to create and reuse
 - Treat conda environments in a similar fashion to containers, i.e.
@@ -16,14 +16,14 @@ In a nutshell (pun intended), conda-shell has the following goals:
 
 Some auxillary benefits:
 
-- Distribute a single script (including its versioned dependencies), without creating a conda package nor an environment.yml
+- Distribute a single script (including its versioned dependencies), without creating a conda package nor an _environment.yml_ file
 - No need to memorize the names of your "throwaway" conda environments
 - No need to type `source activate ...` and `source deactivate`
-- Quickly find and activate existing environments based on package specs
+- Quickly find / activate existing environments based on package specs
 
 ## Installation
 
-There are two installation methods:
+There are two methods of installation:
 - [With conda](#with-conda)
 - [From source](#from-source)
 
@@ -64,12 +64,12 @@ Here we run Python code inside of the environment:
 conda-shell python=3.6 numpy=1.13 --run 'python -c "import numpy as np; print(np.__version__)"'
 ```
 
-With the same dependencies, this time a script:
+With the same dependencies, this is how we'd run a script:
 ```
 conda-shell python=3.6 numpy=1.13 --run 'python helloworld.py'
 ```
 
-Note that the second command reuses the conda environment created in the first command.
+Note that the second command finds the existing environment and reuses it.
 
 ### Interactive Shell
 
@@ -116,10 +116,21 @@ Run it and let `conda-shell` do its magic!
 ./np-ver-check.py
 ```
 
+## Misc commands
+
+Remove all environments created by `conda-shell`:
+
+In `bash` shell, for example:
+```
+for e in `conda info --envs | awk '/shell_/ {print $2}'`; do
+  conda env remove -n `basename $e`;
+done
+```
+
 ## FAQ
 
-Q: Does this project have all the features of `nix-shell`?
-A: No. It may never reach the full functionality of `nix-shell`, since `nix` is a different package manager than `conda` with different ambitions. However this is a step in that direction.
+Q: Where are the environments that `conda-shell` created? Can I remove/modify them outside of `conda-shell`?
+A: The environments are in the same location as where `conda` puts them; in fact, `conda-shell` creates those environments by calling out to `conda` as a subprocess. Conda environments created by `conda-shell` can be managed by `conda env` commands.
 
 Q: Have you seen [conda-execute](https://github.com/conda-tools/conda-execute)?
 A: On the surface, `conda-shell` may look like it offers very similar features as `conda-execute`. However there are a number of important differences:
@@ -130,3 +141,6 @@ A: On the surface, `conda-shell` may look like it offers very similar features a
 
 Q: Why is this not a part of `conda` (like `nix-shell` is a part of `nix`)?
 A: First of all, `conda-shell` is still a very immature tool. Second, `conda-shell` is not (yet?) compatible with Windows.
+
+Q: Does this project have all the features of `nix-shell`?
+A: No. It may never reach the full functionality of `nix-shell`, since `nix` is a different package manager than `conda` with different ambitions. However this is a step in that direction.
