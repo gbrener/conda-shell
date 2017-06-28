@@ -8,18 +8,17 @@ Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda pac
 
 In a nutshell (pun intended), `conda-shell` has the following goals:
 
-- Make conda environments as "cheap" as possible to create and reuse
+- Maintain feature-parity with `nix-shell`, to the extent that conda supports it
+- Make conda environments as "cheap" as possible to create and reuse, based on package specs rather than environment names
 - Treat conda environments in a similar fashion as containers, i.e.
     - Enable execution of arbitrary commands in a predefined environment, or
     - Activate an environment as an interactive subshell
-- Maintain feature-parity with nix-shell, to the extent that conda supports it
 
 Some auxillary benefits:
 
 - Distribute a single script (including its versioned dependencies), without creating a conda package nor an _environment.yml_ file
-- No need to memorize the names of your "throwaway" conda environments
-- No need to type `source activate ...` and `source deactivate`
-- Quickly find / activate existing environments based on package specs
+- Run arbitrary commands inside conda environments without doing any `source`-ing or misremembering an environment's name 
+- Save some keystrokes
 
 ## Installation
 
@@ -60,11 +59,13 @@ The following examples assume a desired environment of `Python 3.6` and `NumPy 1
 ### Arbitrary commands
 
 Here we run Python code inside of the environment:
+
 ```
 conda-shell python=3.6 numpy=1.13 --run 'python -c "import numpy as np; print(np.__version__)"'
 ```
 
 With the same dependencies, this is how we'd run a script:
+
 ```
 conda-shell python=3.6 numpy=1.13 --run 'python helloworld.py'
 ```
@@ -73,7 +74,7 @@ Note that the second command finds the existing environment and reuses it.
 
 ### Interactive Shell
 
-Without the `--run` parameter, an interactive shell prompt appears:
+Without the `--run` argument, an interactive shell prompt appears:
 
 ```
 conda-shell python=3.6 numpy=1.13
@@ -89,11 +90,11 @@ conda create -n shell_abc python=3.6 numpy=1.13
 source activate shell_abc
 ```
 
-One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, exiting the `conda-shell` environment automatically deactivates it, saving you some typing.
+One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering and exiting the `conda-shell` environment automatically activate/deactivate it, saving you some typing.
 
 ### In a script
 
-Create a file called `np-ver-check.py`. Note the `-i` command, indicating that the `python` program should be used to interpret the file (similar to typing `#!/usr/bin/env python`):
+Create a file called `np-ver-check.py`. Note the `-i` argument, indicating that the `python` program should be used to interpret the file (similar to typing `#!/usr/bin/env python`):
 
 ```
 #!/usr/bin/env conda-shell
