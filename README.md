@@ -20,6 +20,10 @@ Some auxillary benefits:
 - Run arbitrary commands inside conda environments without doing any `source`-ing or misremembering an environment's name 
 - Save some keystrokes
 
+### Requirements
+
+- `conda` package manager (either [Anaconda](https://docs.continuum.io/anaconda/install/) or [Miniconda](https://conda.io/docs/install/quick.html#miniconda-quick-install-requirements)).
+
 ## Installation
 
 Currently there is only one method of installation:
@@ -29,7 +33,7 @@ Soon there will be two (via `conda install`).
 
 ### From source
 
-`conda-shell` may be installed from source:
+Once the [requirements](#requirements) are satisified, `conda-shell` may be installed from source:
 
 ```
 git clone https://github.com/gbrener/conda-shell.git
