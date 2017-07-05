@@ -29,7 +29,7 @@ Soon there will be two (via `conda install`).
 
 ### From source
 
-Alternatively, `conda-shell` may be installed from source:
+`conda-shell` may be installed from source:
 
 ```
 git clone https://github.com/gbrener/conda-shell.git
