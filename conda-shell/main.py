@@ -12,8 +12,56 @@ import shlex
 import json
 import atexit
 import cmd
+import importlib
+import argparse
 
 from . import __version__
+
+
+parse_create_args, parse_install_args, conda_create, conda_install = import_conda()
+
+
+def import_conda():
+    # Extend sys.path so that conda.cli module can be imported
+    sp_dir = next(filter(lambda p: ('envs' in p and p.endswith('site-packages')), sys.path))
+    split_sp_dir = sp_dir.split(os.path.sep)
+    envs_idx = split_sp_dir.index('envs')
+    root_sp_dir = os.path.sep.join(split_sp_dir[:envs_idx] + split_sp_dir[envs_idx+2:])
+    sys.path.append(root_sp_dir)
+
+    # Reuse conda.cli.main's argparse functionality
+    main_mod = importlib.import_module('conda.cli.main')
+    main_install_mod = importlib.import_module('conda.cli.main_install')
+    main_create_mod = importlib.import_module('conda.cli.main_create')
+    parser, sub_parsers = main_mod.generate_parser()
+    main_install_mod.configure_parser(sub_parsers)
+    main_create_mod.configure_parser(sub_parsers)
+
+    # Get the subparsers
+    _create_parser, _install_parser = None, None
+    for sp in filter(lambda a: isinstance(a, argparse._SubParsersAction), parser._subparsers._actions):
+        if 'install' in sp:
+            _parser = sp._name_parser_map['install']
+            _parser.prog = 'conda-shell'
+            _parser.epilog = _parser.epilog = """Examples:\n\n    conda-shell python=3.6 numpy=1.13\n    conda-shell python=2.7 --run 'python -V'"""
+            _parser.description = "Port of the `nix-shell` command for the conda package manager.\n\nThis is a superset of the command-line interface for `conda install`; execute `conda install --help` for more information."
+            _parser.add_argument('--run', type=str, help='Command to run inside of the temporary conda environment')
+            _install_parser = _parser
+        elif 'create' in sp:
+            _parser = sp._name_parser_map['create']
+            _create_parser = _parser
+
+    # Create closures to be invoked later on
+    def _parse_create_args(argv):
+        return _create_parser.parse_args(argv)
+    def _parse_install_args(argv):
+        return _install_parser.parse_args(argv)
+    def _conda_create(args):
+        return main_create_mod.execute(args, _create_parser)
+    def _conda_install(args):
+        return main_install_mod.execute(args, _install_parser)
+
+    return _parse_create_args, _parse_install_args, _conda_create, _conda_install
 
 
 def rand_env_name():
@@ -181,6 +229,8 @@ def main(argv):
         exec_cmd = [interpreter, script_fpath]
         exec_cmd.extend(argv[2:])
     else:
+        args = parse_install_args(argv[1:])
+
         if not argv[1:]:
             raise ValueError('No arguments provided.')
 
