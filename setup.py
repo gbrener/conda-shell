@@ -1,19 +1,18 @@
 import subprocess
 
 from setuptools import setup, find_packages
+from conda_shell import __version__
 
-
-with open('VERSION') as ver_fd:
-    version = ver_fd.read().strip()
 
 with open('requirements.txt') as reqs_fd:
     install_requires = reqs_fd.read().strip().split()
 
 git_cmd = ['git', 'remote', 'get-url', 'origin']
-git_url = subprocess.check_output(git_cmd).rstrip()
+git_url = subprocess.check_output(git_cmd, universal_newlines=True).rstrip()
 
 setup(name='conda-shell',
-      version=version,
+      version=__version__,
+      license='BSD',
       description='Port of nix-shell for the conda package manager',
       url=git_url,
       install_requires=install_requires,

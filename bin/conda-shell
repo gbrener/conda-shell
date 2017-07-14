@@ -2,6 +2,6 @@
 
 import sys
 
-conda_shell = __import__('conda-shell.main',
-                         fromlist=('conda-shell',))
+import conda_shell
+
 conda_shell.main(sys.argv)
