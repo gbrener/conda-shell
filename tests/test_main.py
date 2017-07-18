@@ -52,10 +52,9 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            tempfd.close()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            subprocess.check_call([tempfd.name], universal_newlines=True)
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        subprocess.check_call([tempfd.name], universal_newlines=True)
         out, err = capfd.readouterr()
         assert 'np.arange(10): [0 1 2 3 4 5 6 7 8 9]' in out
 
