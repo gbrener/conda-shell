@@ -1,6 +1,7 @@
 # conda-shell
 
 [![Build Status](https://travis-ci.org/gbrener/conda-shell.svg?branch=master)](https://travis-ci.org/gbrener/conda-shell)
+[![codecov](https://codecov.io/gh/gbrener/conda-shell/branch/master/graph/badge.svg)](https://codecov.io/gh/gbrener/conda-shell)
 
 Port of the [nix-shell](https://github.com/NixOS/nix) command for the [conda package manager](https://github.com/conda/conda).
 
