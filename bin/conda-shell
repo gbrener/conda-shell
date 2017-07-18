@@ -2,6 +2,6 @@
 
 import sys
 
-import conda_shell
+from conda_shell import main
 
-conda_shell.main(sys.argv)
+main.main(sys.argv)
