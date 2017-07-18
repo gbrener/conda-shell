@@ -52,6 +52,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         subprocess.check_call([tempfd.name], universal_newlines=True)
@@ -75,6 +76,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -95,6 +97,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -114,6 +117,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -133,6 +137,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -152,6 +157,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+        os.close(tempfd.name)
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
