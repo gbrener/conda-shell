@@ -52,6 +52,7 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
+            tempfd.close()
             stats = os.stat(tempfd.name)
             os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
             subprocess.check_call([tempfd.name], universal_newlines=True)
@@ -75,15 +76,15 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            try:
-                subprocess.check_call([tempfd.name], universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out, err = capfd.readouterr()
-                assert 'CondaShellArgumentError' in err
-            else:
-                assert False
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        try:
+            subprocess.check_call([tempfd.name], universal_newlines=True)
+        except subprocess.CalledProcessError:
+            out, err = capfd.readouterr()
+            assert 'CondaShellArgumentError' in err
+        else:
+            assert False
 
         # Conflicting interpreter arguments
         with NamedTemporaryFile(mode='w') as tempfd:
@@ -95,15 +96,15 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            try:
-                subprocess.check_call([tempfd.name], universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out, err = capfd.readouterr()
-                assert 'CondaShellArgumentError' in err
-            else:
-                assert False
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        try:
+            subprocess.check_call([tempfd.name], universal_newlines=True)
+        except subprocess.CalledProcessError:
+            out, err = capfd.readouterr()
+            assert 'CondaShellArgumentError' in err
+        else:
+            assert False
 
         # -n/--name argument provided
         with NamedTemporaryFile(mode='w') as tempfd:
@@ -114,15 +115,15 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            try:
-                subprocess.check_call([tempfd.name], universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out, err = capfd.readouterr()
-                assert 'CondaShellArgumentError' in err
-            else:
-                assert False
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        try:
+            subprocess.check_call([tempfd.name], universal_newlines=True)
+        except subprocess.CalledProcessError:
+            out, err = capfd.readouterr()
+            assert 'CondaShellArgumentError' in err
+        else:
+            assert False
 
         # --run argument provided
         with NamedTemporaryFile(mode='w') as tempfd:
@@ -133,15 +134,15 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            try:
-                subprocess.check_call([tempfd.name], universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out, err = capfd.readouterr()
-                assert 'CondaShellArgumentError' in err
-            else:
-                assert False
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        try:
+            subprocess.check_call([tempfd.name], universal_newlines=True)
+        except subprocess.CalledProcessError:
+            out, err = capfd.readouterr()
+            assert 'CondaShellArgumentError' in err
+        else:
+            assert False
 
         # -i and --run argument provided
         with NamedTemporaryFile(mode='w') as tempfd:
@@ -152,15 +153,15 @@ import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
             tempfd.flush()
-            stats = os.stat(tempfd.name)
-            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-            try:
-                subprocess.check_call([tempfd.name], universal_newlines=True)
-            except subprocess.CalledProcessError:
-                out, err = capfd.readouterr()
-                assert 'error' in err and 'not allowed with argument' in err
-            else:
-                assert False
+        stats = os.stat(tempfd.name)
+        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+        try:
+            subprocess.check_call([tempfd.name], universal_newlines=True)
+        except subprocess.CalledProcessError:
+            out, err = capfd.readouterr()
+            assert 'error' in err and 'not allowed with argument' in err
+        else:
+            assert False
 
     def test_get_conda_env_dirs(self, remove_shell_envs):
         """Test that conda-shell properly identifies conda environment
