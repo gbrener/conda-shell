@@ -26,6 +26,7 @@ Some auxillary benefits:
 
 `conda-shell` requires the following software to be installed:
 - `conda` package manager (either [Anaconda](https://docs.continuum.io/anaconda/install/) or [Miniconda](https://conda.io/docs/install/quick.html#miniconda-quick-install-requirements)).
+- `six` is required for Python 2 and Python 3 support.
 
 Currently there is only one method of installation:
 - [From source](#from-source)
@@ -39,7 +40,7 @@ Once the [requirements](#requirements) are satisified, `conda-shell` may be inst
 ```
 git clone https://github.com/gbrener/conda-shell.git
 cd conda-shell
-python setup.py install
+python setup.py develop
 ```
 
 ## Usage

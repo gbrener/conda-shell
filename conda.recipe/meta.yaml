@@ -17,9 +17,16 @@ requirements:
 
   run:
     - python
+    - six
 
 test:
+  requires:
+    - mock # [py<=2]
+    - pytest
+    - pytest-coverage
+
   command:
+    - pytest --cov=conda_shell --cov-report term-missing -x
     - which conda-shell
 
 about:
