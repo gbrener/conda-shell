@@ -20,6 +20,7 @@ before_install:
   - conda create -n test-env python=$TRAVIS_PYTHON_VERSION
   - conda env update -n test-env -f requirements.txt
   - source activate test-env
+  - conda install -c conda-forge codecov
 
 install:
   - python setup.py develop --no-deps
@@ -27,3 +28,7 @@ install:
 script:
   - flake8 conda_shell tests setup.py
   - pytest --cov=conda_shell --cov-report term-missing
+
+after_success:
+  - codecov
+
