@@ -235,7 +235,9 @@ print(f\'np.arange(10): {np.arange(10)}\')
             start_tm = time.time()
         else:
             start_tm = time.monotonic()
-        main.main(['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo'])
+        main.main(
+            ['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo']
+        )
         if six.PY2:
             end_tm = time.time()
         else:
@@ -252,7 +254,9 @@ print(f\'np.arange(10): {np.arange(10)}\')
             start_tm = time.time()
         else:
             start_tm = time.monotonic()
-        main.main(['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo'])
+        main.main(
+            ['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo']
+        )
         if six.PY2:
             end_tm = time.time()
         else:
@@ -261,5 +265,5 @@ print(f\'np.arange(10): {np.arange(10)}\')
         env_dirs = main.get_conda_env_dirs()
         assert len(env_dirs) == 2
 
-        # conda-shell should save us at least 10 seconds of waiting
-        assert first_tdiff - second_tdiff > 10
+        # conda-shell should save us at least 5 seconds of waiting
+        assert first_tdiff - second_tdiff > 5
