@@ -50,8 +50,8 @@ def parse_script_cmds(script_fpath, cli):
             if linect == 0:
                 continue
             elif re.match(r'^#!\s*conda-shell\s+', line):
-                cs_cmd = shlex.split(line.split('conda-shell', 1))
-                args = cli.parse_shell_args(cs_cmd[1].rstrip())
+                cs_cmd = shlex.split(line.split('conda-shell', 1)[1].rstrip())
+                args = cli.parse_shell_args(cs_cmd)
                 if args.interpreter != interpreter:
                     if interpreter is not None:
                         raise CondaShellArgumentError(

@@ -44,7 +44,7 @@ class TestMain(object):
 
     def test_main_in_shebang(self, remove_shell_envs, capfd):
         """Test that conda-shell works from within a shebang line."""
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python python=3.6 numpy=1.12
 
@@ -67,7 +67,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         - --run argument provided
         """
         # No interpreter argument
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell python=3.6 numpy=1.12
 
@@ -86,7 +86,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
                 assert False
 
         # Conflicting interpreter arguments
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python3 python=3.6 numpy=1.12
 #!conda-shell -i python2 bzip2 gzip
@@ -106,7 +106,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
                 assert False
 
         # -n/--name argument provided
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python -n test_env python=3.6 numpy=1.12
 
@@ -125,7 +125,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
                 assert False
 
         # --run argument provided
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell python=3.6 numpy=1.12 --run "print(1)"
 
@@ -144,7 +144,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
                 assert False
 
         # -i and --run argument provided
-        with NamedTemporaryFile() as tempfd:
+        with NamedTemporaryFile(mode='w') as tempfd:
             tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python python=3.6 numpy=1.12 --run "print(1)"
 
@@ -235,7 +235,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
             start_tm = time.time()
         else:
             start_tm = time.monotonic()
-        main.main(['conda-shell', 'python=2.7', '--run', 'echo'])
+        main.main(['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo'])
         if six.PY2:
             end_tm = time.time()
         else:
@@ -252,7 +252,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
             start_tm = time.time()
         else:
             start_tm = time.monotonic()
-        main.main(['conda-shell', 'python=2.7', '--run', 'echo'])
+        main.main(['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo'])
         if six.PY2:
             end_tm = time.time()
         else:
@@ -261,5 +261,5 @@ print(f\'np.arange(10): {np.arange(10)}\')
         env_dirs = main.get_conda_env_dirs()
         assert len(env_dirs) == 2
 
-        # conda-shell should save us at least 3 seconds of waiting
-        assert first_tdiff - second_tdiff > 3
+        # conda-shell should save us at least 10 seconds of waiting
+        assert first_tdiff - second_tdiff > 10
