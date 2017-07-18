@@ -25,5 +25,5 @@ install:
   - python setup.py develop --no-deps
 
 script:
-    - flake8 conda_shell tests setup.py
-    - pytest --cov=conda_shell --cov-report term-missing
+  - flake8 conda_shell tests setup.py
+  - pytest --cov=conda_shell --cov-report term-missing
