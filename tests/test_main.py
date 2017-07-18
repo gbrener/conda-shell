@@ -44,15 +44,15 @@ class TestMain(object):
 
     def test_main_in_shebang(self, remove_shell_envs, capfd):
         """Test that conda-shell works from within a shebang line."""
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python python=3.6 numpy=1.12
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         subprocess.check_call([tempfd.name], universal_newlines=True)
@@ -68,15 +68,15 @@ print(f\'np.arange(10): {np.arange(10)}\')
         - --run argument provided
         """
         # No interpreter argument
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell python=3.6 numpy=1.12
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -88,16 +88,16 @@ print(f\'np.arange(10): {np.arange(10)}\')
             assert False
 
         # Conflicting interpreter arguments
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python3 python=3.6 numpy=1.12
 #!conda-shell -i python2 bzip2 gzip
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -109,15 +109,15 @@ print(f\'np.arange(10): {np.arange(10)}\')
             assert False
 
         # -n/--name argument provided
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python -n test_env python=3.6 numpy=1.12
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -129,15 +129,15 @@ print(f\'np.arange(10): {np.arange(10)}\')
             assert False
 
         # --run argument provided
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell python=3.6 numpy=1.12 --run "print(1)"
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
@@ -149,15 +149,15 @@ print(f\'np.arange(10): {np.arange(10)}\')
             assert False
 
         # -i and --run argument provided
-        with NamedTemporaryFile(mode='w', delete=False) as tempfd:
-            tempfd.write('''#!/usr/bin/env conda-shell
+        tempfd = NamedTemporaryFile(mode='w', delete=False)
+        tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python python=3.6 numpy=1.12 --run "print(1)"
 
 import numpy as np
 print(f\'np.arange(10): {np.arange(10)}\')
 ''')
-            tempfd.flush()
-        os.close(tempfd)
+        tempfd.flush()
+        tempfd.close()
         stats = os.stat(tempfd.name)
         os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
         try:
