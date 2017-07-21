@@ -158,13 +158,7 @@ def run_cmds_in_env(cmds, cli):
 
     # Existing environment was not found, so create a fresh one.
     if env_to_reuse is None:
-        # TODO: The following lines (should) make this work without subprocess
-        # cmds[0].no_default_packages = False
-        # cmds[0].clone = False
-        # cli.conda_create(cmds[0])
-        subprocess.check_call(['conda', 'create', '-n', cmds[0].name, '-y'] +
-                              cmds[0].packages,
-                              universal_newlines=True)
+        cli.conda_create(cmds[0])
         found_env = False
         env_dpaths = get_conda_env_dirs()
         for env_dpath in env_dpaths:
