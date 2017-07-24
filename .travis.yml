@@ -18,9 +18,8 @@ before_install:
 
   # Install dependencies
   - conda create -n test-env python=$TRAVIS_PYTHON_VERSION
-  - conda env update -n test-env -f requirements.txt
+  - conda env update -n test-env -f environment.yml
   - source activate test-env
-  - conda install -c conda-forge coveralls
 
 install:
   - python setup.py develop --no-deps
