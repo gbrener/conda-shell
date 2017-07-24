@@ -20,7 +20,7 @@ before_install:
   - conda create -n test-env python=$TRAVIS_PYTHON_VERSION
   - conda env update -n test-env -f requirements.txt
   - source activate test-env
-  - conda install -c conda-forge codecov
+  - conda install -c conda-forge coveralls
 
 install:
   - python setup.py develop --no-deps
