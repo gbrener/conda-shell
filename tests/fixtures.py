@@ -17,7 +17,7 @@ def remove_shell_envs():
     shell_envs = filter(lambda dpath: main.is_shell_env(dpath),
                         json.loads(shell_envs_json)['envs'])
     for env_dpath in shell_envs:
-        subprocess.check_call('conda env remove -p '+env_dpath,
+        subprocess.check_call('conda env remove -y -p '+env_dpath,
                               universal_newlines=True,
                               shell=True)
 

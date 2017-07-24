@@ -13,8 +13,10 @@ import copy
 import glob
 
 import six
-six.add_move(six.MovedModule('mock', 'mock', 'unittest.mock'))
-from six.moves import mock
+if six.PY2:
+    import mock
+else:
+    from unittest import mock
 
 
 class CondaShellArgumentError(Exception):
@@ -64,7 +66,6 @@ class CondaCLI(object):
         # Additional branches may be added here to support more of conda's
         # subparsers
 
-
     def _get_conda_sp_dpath(self):
         """Return the site-packages directory where conda resides.
         Errors-out if the user isn't using Python from within conda.
@@ -95,17 +96,16 @@ class CondaCLI(object):
         if conda_sp_dpath is None:
             raise ValueError('Failed to find site-packages directory where'
                              ' conda is installed.')
-
         return conda_sp_dpath
 
     def _import_conda_modules(self):
-        """Import the necessary conda.cli modules.
+        """Import the necessary conda modules.
         """
         sys.path.append(self.conda_sp_dpath)
         sys.path.extend(glob.glob(os.path.join(self.conda_sp_dpath, 'pycosat*')))
 
-        for modname in ['ruamel', 'ruamel.yaml', 'ruamel.yaml.comments',
-                        'ruamel.yaml.scanner']:
+        for modname in ('ruamel', 'ruamel.yaml', 'ruamel.yaml.comments',
+                        'ruamel.yaml.scanner'):
             sys.modules[modname] = mock.MagicMock()
 
         imported_modules = (
@@ -121,23 +121,42 @@ class CondaCLI(object):
         """Given a list of arguments (likely derived from `sys.argv`), return
         argparse output as if `conda create` were called over the command line.
         """
-        return self._create_parser.parse_args(argv)
+        known, unknown = self._create_parser.parse_known_args(argv)
+        if ((set(['-i', '--interpreter']) - set(unknown)) not in
+            (set(['--interpreter']), set(['-i']))):
+            self._create_parser.parse_args(argv)
+        return known
 
     def parse_install_args(self, argv):
         """Given a list of arguments (likely derived from `sys.argv`), return
         argparse output as if `conda install` were called over the command
         line.
         """
-        return self._install_parser.parse_args(argv)
+        known, unknown = self._install_parser.parse_known_args(argv)
+        return known
 
     def conda_create(self, args):
         """Given a Namespace object from `conda create`'s argument parser,
         return the output from the `conda create` command (this may be `None`).
         """
         prefix = os.path.join(os.path.split(os.path.split(os.path.split(self.conda_sp_dpath)[0])[0])[0], 'envs', args.name)
+        # The following is needed to satisfy conda Context object
         self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
-        retval = self._main_create_mod.execute(args, self._create_parser)
+        with mock.patch('conda.history.sys') as sys_mock:
+            sys_mock.argv = []
+            skip_args = 0
+            for arg in args._argv:
+                if skip_args:
+                    skip_args -= 1
+                elif arg == 'conda-shell':
+                    sys_mock.argv.append('conda')
+                    sys_mock.argv.append('create')
+                elif arg == '--run':
+                    skip_args = 1
+                else:
+                    sys_mock.argv.append(arg)
+            retval = self._main_create_mod.execute(args, self._create_parser)
         return retval
 
     def conda_install(self, args):
@@ -146,9 +165,23 @@ class CondaCLI(object):
         `None`).
         """
         prefix = os.path.join(os.path.split(os.path.split(os.path.split(self.conda_sp_dpath)[0])[0])[0], 'envs', args.name)
+        # The following is needed to satisfy conda Context object
         self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
-        retval = self._main_install_mod.execute(args, self._install_parser)
+        with mock.patch('conda.history.sys') as sys_mock:
+            sys_mock.argv = []
+            skip_args = 0
+            for arg in args._argv:
+                if skip_args:
+                    skip_args -= 1
+                elif arg == 'conda-shell':
+                    sys_mock.argv.append('conda')
+                    sys_mock.argv.append('install')
+                elif arg in ('-i', '--interpreter'):
+                    skip_args = 0
+                else:
+                    sys_mock.argv.append(arg)
+            retval = self._main_install_mod.execute(args, self._install_parser)
         return retval
 
 
