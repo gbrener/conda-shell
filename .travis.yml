@@ -13,11 +13,14 @@ matrix:
       sudo: false
       python: 3.6
     - os: osx
-      python: 2.7
+      language: generic
+      env: PYVER=2.7
     - os: osx
-      python: 3.5
+      language: generic
+      env: PYVER=3.5
     - os: osx
-      python: 3.6
+      language: generic
+      env: PYVER=3.6
 
 before_install:
   # Install conda
@@ -28,7 +31,7 @@ before_install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test-env python=$TRAVIS_PYTHON_VERSION
+  - conda create -n test-env python=${PYVER:-TRAVIS_PYTHON_VERSION}
   - conda env update -n test-env -f environment.yml
   - source activate test-env
 
@@ -36,7 +39,7 @@ install:
   - python setup.py develop --no-deps
 
 script:
-  - flake8 conda_shell tests setup.py
+  - flake8 setup.py conda_shell
   - pytest --verbose --cov=conda_shell --cov-report term-missing --pep8 conda_shell
 
 after_success:

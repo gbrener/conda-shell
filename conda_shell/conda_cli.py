@@ -102,7 +102,9 @@ class CondaCLI(object):
         """Import the necessary conda modules.
         """
         sys.path.append(self.conda_sp_dpath)
-        sys.path.extend(glob.glob(os.path.join(self.conda_sp_dpath, 'pycosat*')))
+        sys.path.extend(glob.glob(
+            os.path.join(self.conda_sp_dpath, 'pycosat*'))
+        )
 
         for modname in ('ruamel', 'ruamel.yaml', 'ruamel.yaml.comments',
                         'ruamel.yaml.scanner'):
@@ -123,7 +125,7 @@ class CondaCLI(object):
         """
         known, unknown = self._create_parser.parse_known_args(argv)
         if ((set(['-i', '--interpreter']) - set(unknown)) not in
-            (set(['--interpreter']), set(['-i']))):
+                (set(['--interpreter']), set(['-i']))):
             self._create_parser.parse_args(argv)
         return known
 
@@ -139,7 +141,9 @@ class CondaCLI(object):
         """Given a Namespace object from `conda create`'s argument parser,
         return the output from the `conda create` command (this may be `None`).
         """
-        prefix = os.path.join(os.path.split(os.path.split(os.path.split(self.conda_sp_dpath)[0])[0])[0], 'envs', args.name)
+        prefix = os.path.join(os.path.split(os.path.split(os.path.split(
+            self.conda_sp_dpath
+        )[0])[0])[0], 'envs', args.name)
         # The following is needed to satisfy conda Context object
         self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
@@ -164,7 +168,9 @@ class CondaCLI(object):
         return the output from the `conda install` command (this may be
         `None`).
         """
-        prefix = os.path.join(os.path.split(os.path.split(os.path.split(self.conda_sp_dpath)[0])[0])[0], 'envs', args.name)
+        prefix = os.path.join(os.path.split(os.path.split(os.path.split(
+            self.conda_sp_dpath
+        )[0])[0])[0], 'envs', args.name)
         # The following is needed to satisfy conda Context object
         self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
@@ -192,8 +198,7 @@ class CondaShellCLI(CondaCLI):
         - `--run`: For running arbitrary commands in conda environments made by
           conda-shell
         - `-i` / `--interpreter`: For providing an interpreter via a shebang
-  
-        line
+          line
     """
 
     def __init__(self):
