@@ -9,11 +9,18 @@ matrix:
       env: PYTHON_VERSION=2.7
     - os: linux
       sudo: false
+      python: 3.5
+      env: PYTHON_VERSION=3.5
+    - os: linux
+      sudo: false
       python: 3.6
       env: PYTHON_VERSION=3.6
     - os: osx
       language: generic
       env: PYTHON_VERSION=2.7
+    - os: osx
+      language: generic
+      env: PYTHON_VERSION=3.5
     - os: osx
       language: generic
       env: PYTHON_VERSION=3.6
@@ -25,6 +32,10 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no
   - conda update conda
+
+  # Conda's version of Python needs to reflect conda-shell's
+  # due to code/library reuse:
+  - conda install -n root python=${PYTHON_VERSION}
 
   # Install dependencies
   - conda create -n test-env python=${PYTHON_VERSION}
