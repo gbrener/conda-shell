@@ -14,19 +14,20 @@ requirements:
   build:
     - python
     - setuptools
+    - pyyaml
 
   run:
     - python
     - six
+    - mock  # [py2k]
 
 test:
   requires:
-    - mock # [py<=2]
     - pytest
-    - pytest-coverage
+    - pytest-cov
 
-  command:
-    - pytest --cov=conda_shell --cov-report term-missing -x
+  commands:
+    - pytest --cov=conda_shell --cov-report term-missing -v -x $SP_DIR/tests
     - which conda-shell
 
 about:

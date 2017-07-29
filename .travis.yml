@@ -1,34 +1,42 @@
 language: python
-sudo: false
-python:
-    - "2.7"
-    - "3.5"
-    - "3.6"
 
 matrix:
   fast_finish: True
+  include:
+    - os: linux
+      sudo: false
+      python: 2.7
+      env: PYTHON_VERSION=2.7
+    - os: linux
+      sudo: false
+      python: 3.6
+      env: PYTHON_VERSION=3.6
+    - os: osx
+      language: generic
+      env: PYTHON_VERSION=2.7
+    - os: osx
+      language: generic
+      env: PYTHON_VERSION=3.6
 
 before_install:
   # Install conda
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda$(echo $PYTHON_VERSION | cut -d. -f1)-latest-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda$(echo $PYTHON_VERSION | cut -d. -f1)-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no
   - conda update conda
 
   # Install dependencies
-  - conda create -n test-env python=$TRAVIS_PYTHON_VERSION
-  - conda env update -n test-env -f requirements.txt
+  - conda create -n test-env python=${PYTHON_VERSION}
+  - conda env update -n test-env -f environment.yml
   - source activate test-env
-  - conda install -c conda-forge codecov
 
 install:
   - python setup.py develop --no-deps
 
 script:
-  - flake8 conda_shell tests setup.py
-  - pytest --cov=conda_shell --cov-report term-missing
+  - flake8 setup.py conda_shell
+  - pytest --verbose --cov=conda_shell --cov-report term-missing tests
 
 after_success:
-  - codecov
-
+  - coveralls

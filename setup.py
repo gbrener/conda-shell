@@ -1,11 +1,17 @@
 import subprocess
 
+import yaml
 from setuptools import setup, find_packages
 from conda_shell import __version__
 
 
-with open('requirements.txt') as reqs_fd:
-    install_requires = reqs_fd.read().strip().split()
+install_requires = []
+with open('environment.yml') as env_fd:
+    deps = yaml.safe_load(env_fd)['dependencies']
+    for dep in deps:
+        if '::' in dep:
+            dep = dep.split('::')[1]
+        install_requires.append(dep)
 
 git_cmd = ['git', 'remote', 'get-url', 'origin']
 git_url = subprocess.check_output(git_cmd, universal_newlines=True).rstrip()
