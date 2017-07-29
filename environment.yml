@@ -1,0 +1,9 @@
+name: conda-shell
+dependencies:
+  - flake8
+  - pytest
+  - pytest-cov
+  - pytest-pep8
+  - six
+  - mock
+  - conda-forge::coveralls
