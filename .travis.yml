@@ -24,11 +24,7 @@ matrix:
 
 before_install:
   # Install conda
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then \
-        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; \
-    else \
-        wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh; \
-    fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; else wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no
@@ -44,8 +40,7 @@ install:
 
 script:
   - flake8 setup.py conda_shell
-  - pytest --verbose --cov=conda_shell --cov-report term-missing --pep8 conda_shell
+  - pytest --verbose --cov=conda_shell --cov-report term-missing conda_shell
 
 after_success:
   - coveralls
-
