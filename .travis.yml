@@ -6,21 +6,24 @@ matrix:
     - os: linux
       sudo: false
       python: 2.7
+      env: PYTHON_VERSION=2.7
     - os: linux
       sudo: false
       python: 3.5
+      env: PYTHON_VERSION=3.5
     - os: linux
       sudo: false
       python: 3.6
+      env: PYTHON_VERSION=3.6
     - os: osx
       language: generic
-      env: PYVER=2.7
+      env: PYTHON_VERSION=2.7
     - os: osx
       language: generic
-      env: PYVER=3.5
+      env: PYTHON_VERSION=3.5
     - os: osx
       language: generic
-      env: PYVER=3.6
+      env: PYTHON_VERSION=3.6
 
 before_install:
   # Install conda
@@ -31,7 +34,7 @@ before_install:
   - conda update conda
 
   # Install dependencies
-  - conda create -n test-env python="${PYVER:-TRAVIS_PYTHON_VERSION}"
+  - conda create -n test-env python=${PYTHON_VERSION}
   - conda env update -n test-env -f environment.yml
   - source activate test-env
 
