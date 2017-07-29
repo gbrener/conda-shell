@@ -43,7 +43,7 @@ install:
 
 script:
   - flake8 setup.py conda_shell
-  - pytest --verbose --cov=conda_shell --cov-report term-missing conda_shell
+  - pytest --verbose --cov=conda_shell --cov-report term-missing tests
 
 after_success:
   - coveralls
