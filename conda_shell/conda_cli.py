@@ -102,9 +102,9 @@ class CondaCLI(object):
         """Import the necessary conda modules.
         """
         sys.path.append(self.conda_sp_dpath)
-        #sys.path.extend(glob.glob(
-        #    os.path.join(self.conda_sp_dpath, 'pycosat*'))
-        #)
+        sys.path.extend(glob.glob(
+            os.path.join(self.conda_sp_dpath, 'pycosat*'))
+        )
 
         for modname in ('ruamel', 'ruamel.yaml', 'ruamel.yaml.comments',
                         'ruamel.yaml.scanner'):
