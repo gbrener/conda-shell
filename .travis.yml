@@ -1,12 +1,23 @@
 language: python
-sudo: false
-python:
-    - "2.7"
-    - "3.5"
-    - "3.6"
 
 matrix:
   fast_finish: True
+  include:
+    - os: linux
+      sudo: false
+      python: 2.7
+    - os: linux
+      sudo: false
+      python: 3.5
+    - os: linux
+      sudo: false
+      python: 3.6
+    - os: osx
+      python: 2.7
+    - os: osx
+      python: 3.5
+    - os: osx
+      python: 3.6
 
 before_install:
   # Install conda
