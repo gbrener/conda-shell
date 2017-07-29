@@ -19,7 +19,7 @@ requirements:
   run:
     - python
     - six
-    - mock # [py<=2]
+    - mock  # [py2k]
 
 test:
   requires:
