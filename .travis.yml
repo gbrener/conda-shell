@@ -24,14 +24,18 @@ matrix:
 
 before_install:
   # Install conda
-  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - if [ "$TRAVIS_OS" = "linux" ]; then \
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh; \
+    else \
+        wget http://repo.continuum.io/miniconda/Miniconda-latest-MacOSX-x86_64.sh -O miniconda.sh; \
+    fi
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no
   - conda update conda
 
   # Install dependencies
-  - conda create -n test-env python=${PYVER:-TRAVIS_PYTHON_VERSION}
+  - conda create -n test-env python="${PYVER:-TRAVIS_PYTHON_VERSION}"
   - conda env update -n test-env -f environment.yml
   - source activate test-env
 
