@@ -46,7 +46,7 @@ class InteractiveShell(cmd.Cmd):
 
     def default(self, line):  # pragma: no cover
         if line == 'EOF':
-            print('\nExiting conda-shell...')
+            print('\nExiting conda-shell...', file=sys.stderr)
             return True
         subprocess.call(shlex.split(line.rstrip()),
                         env=self.env,
