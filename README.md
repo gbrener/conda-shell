@@ -34,8 +34,8 @@ conda install -n root -c gbrener conda-shell
 From source (during development):
 
 ```
-conda env create -f environment.yml
-source activate 
+conda env create -n conda-shell -f environment.yml
+source activate conda-shell
 python setup.py develop --no-deps
 ```
 
