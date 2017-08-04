@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 import os
+import sys
 import re
 import subprocess
 import uuid
@@ -150,7 +151,7 @@ def env_has_pkgs(env_dpath, cmds, cli):
     return True
 
 
-def run_cmds_in_env(cmds, cli):
+def run_cmds_in_env(cmds, cli, argv):
     """Execute the cmds (list of argparse.Namespace objects) in a temporary
     conda environment. Interactive shell functionality is a REPL. Shebang lines
     are handled the same way we handle running arbitrary commands with --run:
@@ -165,7 +166,8 @@ def run_cmds_in_env(cmds, cli):
     for env_dpath in env_dpaths:
         if env_has_pkgs(env_dpath, cmds, cli):
             env_to_reuse = os.path.basename(env_dpath)
-            print('Reusing shell env "{}"...'.format(env_to_reuse))
+            print('Reusing shell env "{}"...'.format(env_to_reuse),
+                  file=sys.stderr)
             break
 
     # Existing environment was not found, so create a fresh one.
@@ -186,10 +188,9 @@ def run_cmds_in_env(cmds, cli):
         for args in cmds:
             if env_to_reuse is not None:
                 args.name = env_to_reuse
-        subprocess.check_call(shlex.split(cmds[0].run),
-                              env=env_vars,
-                              stderr=subprocess.STDOUT,
-                              universal_newlines=True)
+        subprocess.call(shlex.split(cmds[0].run) + argv[2:],
+                        env=env_vars,
+                        universal_newlines=True)
     else:
         prompt = '[{}]: '.format(os.path.basename(env_dpath))
         InteractiveShell(prompt, env=env_vars).cmdloop()
@@ -213,4 +214,4 @@ def main(argv):
         if cmds[0].name is None:
             cmds[0].name = rand_env_name()
 
-    run_cmds_in_env(cmds, cli)
+    run_cmds_in_env(cmds, cli, argv)

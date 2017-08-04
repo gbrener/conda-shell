@@ -25,7 +25,7 @@ class TestMain(object):
             ['conda-shell', 'python=3.5', 'numpy=1.13', '--run', 'python -V']
         )
         out, err = capfd.readouterr()
-        assert 'Python 3.5' in out
+        assert 'Python 3.5' in err
 
     def test_in_shebang(self, remove_shell_envs, capfd):
         """Test that conda-shell works from within a shebang line."""

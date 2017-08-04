@@ -43,7 +43,7 @@ Once the [requirements](#requirements) are satisified, `conda-shell` may be inst
 ```
 git clone https://github.com/gbrener/conda-shell.git
 cd conda-shell
-python setup.py develop
+python setup.py develop --no-deps
 ```
 
 ## Usage

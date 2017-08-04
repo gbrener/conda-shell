@@ -1,6 +1,7 @@
 import subprocess
 
 import yaml
+import six
 from setuptools import setup, find_packages
 from conda_shell import __version__
 
@@ -11,6 +12,10 @@ with open('environment.yml') as env_fd:
     for dep in deps:
         if '::' in dep:
             dep = dep.split('::')[1]
+        if (dep.startswith('pytest') or
+                dep in ('coveralls', 'flake8') or
+                (not six.PY2 and dep == 'mock')):
+            continue
         install_requires.append(dep)
 
 git_cmd = ['git', 'remote', 'get-url', 'origin']
