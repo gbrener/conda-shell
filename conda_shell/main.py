@@ -151,7 +151,7 @@ def env_has_pkgs(env_dpath, cmds, cli):
     return True
 
 
-def run_cmds_in_env(cmds, cli):
+def run_cmds_in_env(cmds, cli, argv):
     """Execute the cmds (list of argparse.Namespace objects) in a temporary
     conda environment. Interactive shell functionality is a REPL. Shebang lines
     are handled the same way we handle running arbitrary commands with --run:
@@ -188,7 +188,7 @@ def run_cmds_in_env(cmds, cli):
         for args in cmds:
             if env_to_reuse is not None:
                 args.name = env_to_reuse
-        subprocess.call(shlex.split(cmds[0].run) + sys.argv[2:],
+        subprocess.call(shlex.split(cmds[0].run) + argv[2:],
                         env=env_vars,
                         universal_newlines=True)
     else:
@@ -214,4 +214,4 @@ def main(argv):
         if cmds[0].name is None:
             cmds[0].name = rand_env_name()
 
-    run_cmds_in_env(cmds, cli)
+    run_cmds_in_env(cmds, cli, argv)
