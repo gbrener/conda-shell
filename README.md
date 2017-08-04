@@ -115,7 +115,7 @@ Q: Have you seen [conda-execute](https://github.com/conda-tools/conda-execute)?
 > A: On the surface, `conda-shell` may look like it offers very similar features as `conda-execute`. However there are a number of important differences:
 >    - `conda-shell` has different goals than `conda-execute` (see [above](#purpose))
 >    - Syntactically, `conda-shell`'s use of the [shebang line](https://en.wikipedia.org/wiki/Shebang_(Unix)) (borrowed from `nix-shell`'s syntax) is more terse and reuses the CLI from the `conda install` command. This avoids inventing (and maintaining) a new YAML-based syntax for declaring package dependencies
->    - `conda-shell` does not need to be installed into the root environment
+>    - `conda-shell` does not need to be installed into the root environment (although it does need to share the same Python version as the root environment)
 >    - `conda-shell` offers container-like features, such as executing arbitrary commands and acting as an interactive subshell
 
 Q: Why is this not a part of `conda` (like `nix-shell` is a part of `nix`)?
