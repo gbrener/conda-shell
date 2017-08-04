@@ -31,7 +31,7 @@ With conda:
 conda install -n root -c gbrener conda-shell
 ```
 
-From source:
+From source (during development):
 
 ```
 conda env create -f environment.yml
