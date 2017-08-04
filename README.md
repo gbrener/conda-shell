@@ -23,7 +23,7 @@ Some auxillary benefits:
 - Run arbitrary commands inside conda environments without doing any `source`-ing or misremembering an environment's name 
 - Save some keystrokes
 
-## Installation
+## Install
 
 With conda:
 
@@ -43,19 +43,19 @@ python setup.py develop --no-deps
 
 ### Arbitrary commands
 
-Here we run Python code inside of the environment:
+To run Python code inside of the environment:
 
 ```
 conda-shell python=3.6 numpy=1.13 --run 'python -c "import numpy as np; print(np.__version__)"'
 ```
 
-With the same dependencies, this is how we'd run a script:
+This is how we'd run a script:
 
 ```
 conda-shell python=3.6 numpy=1.13 --run 'python helloworld.py'
 ```
 
-Note that the second command finds the existing environment and reuses it.
+Note that environments are found and reused if they share the same dependencies.
 
 ### Interactive shell
 
@@ -68,9 +68,9 @@ conda-shell python=3.6 numpy=1.13
 [shell_abc]: 
 ```
 
-One advantage of using `conda-shell` here (instead of `conda` alone) is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering/exiting the `conda-shell` environment automatically activates/deactivates it.
+One advantage of using `conda-shell` (instead of `conda` alone) is that you wouldn't need to memorize the new environment's name; `conda-shell` finds it for you based on the dependencies. Also, entering/exiting the `conda-shell` environment automatically activates/deactivates it.
 
-### In a script
+### From a script
 
 Create a file called `np-ver-check.py`. Note the `-i` argument, indicating that the `python` program should be used to interpret the file (similar to typing `#!/usr/bin/env python`):
 
