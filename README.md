@@ -25,36 +25,21 @@ Some auxillary benefits:
 
 ## Installation
 
-### Requirements
-
-`conda-shell` requires the following software to be installed:
-- `conda` package manager (either [Anaconda](https://docs.continuum.io/anaconda/install/) or [Miniconda](https://conda.io/docs/install/quick.html#miniconda-quick-install-requirements)).
-- `six` is required for Python 2 and Python 3 support.
-
-Currently there is only one method of installation:
-- [From source](#from-source)
-
-Soon there will be two (via `conda install`).
-
-### From source
-
-Once the [requirements](#requirements) are satisified, `conda-shell` may be installed from source:
+With conda:
 
 ```
-git clone https://github.com/gbrener/conda-shell.git
-cd conda-shell
+conda install -n root -c gbrener conda-shell
+```
+
+From source:
+
+```
+conda env create -f environment.yml
+source activate 
 python setup.py develop --no-deps
 ```
 
 ## Usage
-
-`conda-shell` is designed to be used in (at least) three contexts:
-
-- [Running arbitrary commands in a conda environment](#arbitrary-commands)
-- [Starting an interactive shell inside of a conda environment](#interactive-shell)
-- [Using `conda-shell` inside of a script](#inside-a-script)
-
-The following examples assume a desired environment of `Python 3.6` and `NumPy 1.13`.
 
 ### Arbitrary commands
 
@@ -72,7 +57,7 @@ conda-shell python=3.6 numpy=1.13 --run 'python helloworld.py'
 
 Note that the second command finds the existing environment and reuses it.
 
-### Interactive Shell
+### Interactive shell
 
 Without the `--run` argument, an interactive shell prompt appears:
 
@@ -83,14 +68,7 @@ conda-shell python=3.6 numpy=1.13
 [shell_abc]: 
 ```
 
-A similar effect could be acheived with the following `conda` commands:
-
-```
-conda create -n shell_abc python=3.6 numpy=1.13
-source activate shell_abc
-```
-
-One advantage of using `conda-shell` here is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering/exiting the `conda-shell` environment automatically activates/deactivates it, saving you some typing.
+One advantage of using `conda-shell` here (instead of `conda` alone) is that you wouldn't need to memorize the new environment's name; `conda-shell` would find it automatically based on the dependencies. Also, entering/exiting the `conda-shell` environment automatically activates/deactivates it.
 
 ### In a script
 
@@ -117,9 +95,9 @@ Run it and let `conda-shell` work its magic!
 ./np-ver-check.py
 ```
 
-## Misc commands
+## Misc
 
-Remove all environments created by `conda-shell`:
+To remove all environments created by `conda-shell`:
 
 In `bash` shell, for example:
 ```
