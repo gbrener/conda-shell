@@ -15,6 +15,7 @@ requirements:
     - python
     - setuptools
     - pyyaml
+    - six
 
   run:
     - python
