@@ -190,9 +190,7 @@ def run_cmds_in_env(cmds, cli):
                 args.name = env_to_reuse
         subprocess.call(shlex.split(cmds[0].run) + sys.argv[2:],
                         env=env_vars,
-                        universal_newlines=True,
-                        stdout=sys.stdout,
-                        stderr=sys.stderr)
+                        universal_newlines=True)
     else:
         prompt = '[{}]: '.format(os.path.basename(env_dpath))
         InteractiveShell(prompt, env=env_vars).cmdloop()

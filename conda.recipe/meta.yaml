@@ -27,7 +27,7 @@ test:
     - pytest-cov
 
   commands:
-    - pytest --cov=conda_shell --cov-report term-missing -v -x $SP_DIR/tests
+    - pytest --cov=conda_shell --cov-report term-missing -x $SP_DIR/tests
     - which conda-shell
 
 about:
