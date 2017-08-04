@@ -39,6 +39,8 @@ source activate conda-shell
 python setup.py develop --no-deps
 ```
 
+_Note: conda-shell does not need to be installed into the root environment, however it does need to share the same Python version as the root environment._
+
 ## Usage
 
 ### Arbitrary commands
