@@ -145,21 +145,23 @@ class CondaCLI(object):
             self.conda_sp_dpath
         )[0])[0])[0], 'envs', args.name)
         # The following is needed to satisfy conda Context object
-        self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
+        self._base_mod.context.context.__init__(
+            search_path=(),
+            app_name='conda',
+            argparse_args=args,
+        )
         with mock.patch('conda.history.sys') as sys_mock:
-            sys_mock.argv = []
-            skip_args = 0
+            sys_mock.argv = ['conda', 'create', '-n', args.name]
+            skip_next = False
             for arg in args._argv:
-                if skip_args:
-                    skip_args -= 1
-                elif arg == 'conda-shell':
-                    sys_mock.argv.append('conda')
-                    sys_mock.argv.append('create')
-                elif arg == '--run':
-                    skip_args = 1
-                else:
+                if skip_next:
+                    skip_next = False
+                elif arg in ('--run',):
+                    skip_next = True
+                elif not arg.endswith('conda-shell'):
                     sys_mock.argv.append(arg)
+            # print('@@@@@ create sys_mock.argv =', sys_mock.argv)
             retval = self._main_create_mod.execute(args, self._create_parser)
         return retval
 
@@ -172,21 +174,23 @@ class CondaCLI(object):
             self.conda_sp_dpath
         )[0])[0])[0], 'envs', args.name)
         # The following is needed to satisfy conda Context object
-        self._base_mod.context.context.always_yes = True
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
+        self._base_mod.context.context.__init__(
+            search_path=(),
+            app_name='conda',
+            argparse_args=args,
+        )
         with mock.patch('conda.history.sys') as sys_mock:
-            sys_mock.argv = []
-            skip_args = 0
+            sys_mock.argv = ['conda', 'install', '-n', args.name]
+            skip_next = False
             for arg in args._argv:
-                if skip_args:
-                    skip_args -= 1
-                elif arg == 'conda-shell':
-                    sys_mock.argv.append('conda')
-                    sys_mock.argv.append('install')
+                if skip_next:
+                    skip_next = False
                 elif arg in ('-i', '--interpreter'):
-                    skip_args = 0
-                else:
+                    skip_next = True
+                elif not arg.endswith('conda-shell'):
                     sys_mock.argv.append(arg)
+            # print('@@@@@ install sys_mock.argv =', sys_mock.argv)
             retval = self._main_install_mod.execute(args, self._install_parser)
         return retval
 
