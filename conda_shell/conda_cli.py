@@ -182,7 +182,6 @@ class CondaCLI(object):
         )
         with mock.patch('conda.history.sys') as sys_mock:
             sys_mock.argv = ['conda', 'install', '-n', args.name]
-            skip_next = False
             for arg in args._argv:
                 if not arg.endswith('conda-shell'):
                     sys_mock.argv.append(arg)
