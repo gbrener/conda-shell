@@ -37,6 +37,7 @@ def tmp_dir():
     if six.PY2:
         # Python 2.7 has no tempfile.TemporaryDirectory
         import shutil
+        import mock
         tmpdir_dpath = tempfile.mkdtemp()
         tmpdir = mock.Mock(spec=tempfile.TemporaryDirectory, cleanup=lambda: shutil.rmtree(tmpdir_dpath))
         tmpdir.name = tmpdir_dpath # "name" attr is a special case for Mock
