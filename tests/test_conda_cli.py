@@ -3,7 +3,7 @@ import os
 
 import pytest
 from conda_shell import main
-from .fixtures import remove_shell_envs, cli
+from .fixtures import *
 
 
 class TestCondaShellCLI(object):

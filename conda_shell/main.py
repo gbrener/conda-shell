@@ -12,12 +12,13 @@ import subprocess
 import uuid
 import shlex
 import json
+import copy
 
 from .conda_cli import CondaShellCLI, CondaShellArgumentError
 from .interactive import setup_env, InteractiveShell
 
 
-DEFAULT_ENV_PREFIX = 'shell_'
+DEFAULT_ENV_PREFIX = os.environ.get('CONDA_SHELL_ENV_PREFIX', 'shell_')
 
 
 def rand_env_name(prefix=None):
@@ -51,19 +52,6 @@ def parse_script_cmds(script_fpath, cli):
             if re.match(r'^#!\s*conda-shell\s+', line):
                 cs_cmd = shlex.split(line.split('conda-shell', 1)[1].rstrip())
                 args = cli.parse_shell_args(cs_cmd)
-                if not conda_cmds:
-                    args._argv = ['conda', 'create'] + cs_cmd
-                else:
-                    args._argv = ['conda', 'install'] + cs_cmd
-                if (args.interpreter is not None and
-                        args.interpreter != interpreter):
-                    if interpreter is not None:
-                        raise CondaShellArgumentError(
-                            'Conflicting -i/--interpreter arguments provided'
-                            ' in different shebang lines. Please make change'
-                            ' them to be equivalent, or remove all but one.'
-                        )
-                    interpreter = args.interpreter
                 if args.run is not None:
                     raise CondaShellArgumentError(
                         'Please do not provide --run argument when calling'
@@ -74,15 +62,35 @@ def parse_script_cmds(script_fpath, cli):
                         'Please do not provide -n/--name argument when calling'
                         ' conda-shell from the shebang line'
                     )
+                if not conda_cmds and args.interpreter is None:
+                    raise CondaShellArgumentError(
+                        'The first "#!conda-shell" shebang line should provide'
+                        ' the -i/--interactive argument. This is necessary so'
+                        ' that conda-shell knows how to execute the script.'
+                    )
+                args._argv = cs_cmd
+                if (args.interpreter is not None and
+                        args.interpreter != interpreter):
+                    if interpreter is not None:
+                        raise CondaShellArgumentError(
+                            'Conflicting -i/--interpreter arguments provided'
+                            ' in different shebang lines. Please make change'
+                            ' them to be equivalent, or remove all but the'
+                            ' first one.'
+                        )
+                    interpreter = args.interpreter
                 args.yes = True
-                args.name = rand_env_name()
+                if not conda_cmds:
+                    args.name = rand_env_name()
+                else:
+                    args.name = conda_cmds[0].name
                 conda_cmds.append(args)
 
     if interpreter is None:
         raise CondaShellArgumentError(
-            'At least one of the shebang lines (after the first one) should'
-            ' provide the -i/--interactive argument. This is necessary so that'
-            ' conda-shell knows how to execute the script.'
+            'The first "#!conda-shell" shebang line should provide the'
+            ' -i/--interactive argument. This is necessary so that conda-shell'
+            ' knows how to execute the script.'
         )
 
     # Set the --interpreter and --run arguments of each conda-shell command
@@ -110,48 +118,43 @@ def get_conda_env_dirs():
     return env_dpaths
 
 
-def argv_without_run(argv):
-    """Temporary workaround. Return a copy of argv, but without the --run
-    argument.
-
-    This is used for the purposes of comparing history commands to conda-shell
-    commands.
-    """
-    import copy
-    retval = copy.copy(argv)
-    if 'conda-shell' in argv:
-        idx = retval.index('conda-shell')
-        retval[idx] = 'conda'
-        retval = retval[:idx+1] + ['create'] + retval[idx+1:]
-    if '--run' in argv:
-        idx = retval.index('--run')
-        retval = retval[:idx] + retval[idx+2:]
-    return retval
-
-
 def env_has_pkgs(env_dpath, cmds, cli):
     """Return True if env_dpath points to a conda environment which contains
     packages requested by cmds list.
+
+    TODO: Refactor this function so it relies on fewer "hacks".
     """
     hist_fpath = os.path.join(env_dpath, 'conda-meta', 'history')
 
     cmd_idx = 0
     with open(hist_fpath, 'r') as fp:
         for line in fp:
-            if line.startswith('# cmd: '):
-                hist_argv = shlex.split(line.split('# cmd: ', 1)[1].strip())
-                if cmd_idx >= len(cmds):
-                    return False
-                expected_argv = argv_without_run(cmds[cmd_idx]._argv)
-                if expected_argv == hist_argv:
-                    cmd_idx += 1
-                else:
-                    return False
+            if not line.startswith('# cmd: conda'):
+                continue
 
-    return True
+            hist_ln = line.split('# cmd: ', 1)[1]
+            if hist_ln.startswith('conda create'):
+                hist_argv = shlex.split(hist_ln)[2:]
+                hist_args = cli.parse_create_args(hist_argv)
+            elif hist_ln.startswith('conda install'):
+                hist_argv = shlex.split(hist_ln)[2:]
+                hist_args = cli.parse_install_args(hist_argv)
+            else:  # pragma: no cover
+                continue
+
+            if cmd_idx >= len(cmds):
+                return False
+            expected_args = cmds[cmd_idx]
+            if (expected_args.packages == hist_args.packages and
+                    expected_args.channel == hist_args.channel):
+                cmd_idx += 1
+            else:
+                return False
+
+    return cmd_idx == len(cmds)
 
 
-def run_cmds_in_env(cmds, cli, argv):
+def run_cmds_in_env(cmds, cli, argv, in_shebang=False):
     """Execute the cmds (list of argparse.Namespace objects) in a temporary
     conda environment. Interactive shell functionality is a REPL. Shebang lines
     are handled the same way we handle running arbitrary commands with --run:
@@ -173,6 +176,8 @@ def run_cmds_in_env(cmds, cli, argv):
     # Existing environment was not found, so create a fresh one.
     if env_to_reuse is None:
         cli.conda_create(cmds[0])
+        for cmd in cmds[1:]:
+            cli.conda_install(cmd)
         found_env = False
         env_dpaths = get_conda_env_dirs()
         for env_dpath in env_dpaths:
@@ -185,10 +190,15 @@ def run_cmds_in_env(cmds, cli, argv):
 
     env_vars = setup_env(env_vars, env_dpath)
     if cmds[0].run is not None:
-        for args in cmds:
+        for cmd in cmds:
             if env_to_reuse is not None:
-                args.name = env_to_reuse
-        subprocess.call(shlex.split(cmds[0].run) + argv[2:],
+                cmd.name = env_to_reuse
+        # Retain arguments from cmdline if called from a shebang
+        if in_shebang:
+            run_cmd = shlex.split(cmds[0].run) + argv[2:]
+        else:
+            run_cmd = shlex.split(cmds[0].run)
+        subprocess.call(run_cmd,
                         env=env_vars,
                         universal_newlines=True)
     else:
@@ -209,9 +219,9 @@ def main(argv):
         cmds = parse_script_cmds(script_fpath, cli)
     else:
         cmds = [cli.parse_shell_args(argv[1:])]
-        cmds[0]._argv = argv
+        cmds[0]._argv = copy.deepcopy(argv)
         cmds[0].yes = True
         if cmds[0].name is None:
             cmds[0].name = rand_env_name()
 
-    run_cmds_in_env(cmds, cli, argv)
+    run_cmds_in_env(cmds, cli, argv, in_shebang=in_shebang)
