@@ -70,7 +70,7 @@ class CondaCLI(object):
         """Return the site-packages directory where conda resides.
         Errors-out if the user isn't using Python from within conda.
         """
-        if 'conda' not in sys.executable:
+        if 'conda' not in sys.executable:  # pragma: no cover
             raise ValueError('Failed to find directory where conda is'
                              ' installed. conda-shell expects to find conda'
                              ' installed in a directory with "conda" in the'
@@ -93,7 +93,7 @@ class CondaCLI(object):
                 idx += 1
             if conda_sp_dpath is not None:
                 break
-        if conda_sp_dpath is None:
+        if conda_sp_dpath is None:  # pragma: no cover
             raise ValueError('Failed to find site-packages directory where'
                              ' conda is installed.')
         return conda_sp_dpath
@@ -157,7 +157,7 @@ class CondaCLI(object):
             for arg in args._argv:
                 if skip_next:
                     skip_next = False
-                elif arg in ('--run',):
+                elif arg in ('--run', '-i', '--interpreter'):
                     skip_next = True
                 elif not arg.endswith('conda-shell'):
                     sys_mock.argv.append(arg)
@@ -184,11 +184,7 @@ class CondaCLI(object):
             sys_mock.argv = ['conda', 'install', '-n', args.name]
             skip_next = False
             for arg in args._argv:
-                if skip_next:
-                    skip_next = False
-                elif arg in ('-i', '--interpreter'):
-                    skip_next = True
-                elif not arg.endswith('conda-shell'):
+                if not arg.endswith('conda-shell'):
                     sys_mock.argv.append(arg)
             # print('@@@@@ install sys_mock.argv =', sys_mock.argv)
             retval = self._main_install_mod.execute(args, self._install_parser)

@@ -18,7 +18,7 @@ from .conda_cli import CondaShellCLI, CondaShellArgumentError
 from .interactive import setup_env, InteractiveShell
 
 
-DEFAULT_ENV_PREFIX = 'shell_'
+DEFAULT_ENV_PREFIX = os.environ.get('CONDA_SHELL_ENV_PREFIX', 'shell_')
 
 
 def rand_env_name(prefix=None):
@@ -62,17 +62,13 @@ def parse_script_cmds(script_fpath, cli):
                         'Please do not provide -n/--name argument when calling'
                         ' conda-shell from the shebang line'
                     )
-                if not conda_cmds:
-                    args._argv = ['conda', 'create'] + cs_cmd
-                    if args.interpreter is None:
-                        raise CondaShellArgumentError(
-                            'The first "#!conda-shell" shebang line should'
-                            ' provide the -i/--interactive argument. This is'
-                            ' necessary so that conda-shell knows how to'
-                            ' execute the script.'
-                        )
-                else:
-                    args._argv = ['conda', 'install'] + cs_cmd
+                if not conda_cmds and args.interpreter is None:
+                    raise CondaShellArgumentError(
+                        'The first "#!conda-shell" shebang line should provide'
+                        ' the -i/--interactive argument. This is necessary so'
+                        ' that conda-shell knows how to execute the script.'
+                    )
+                args._argv = cs_cmd
                 if (args.interpreter is not None and
                         args.interpreter != interpreter):
                     if interpreter is not None:
@@ -143,7 +139,7 @@ def env_has_pkgs(env_dpath, cmds, cli):
             elif hist_ln.startswith('conda install'):
                 hist_argv = shlex.split(hist_ln)[2:]
                 hist_args = cli.parse_install_args(hist_argv)
-            else:
+            else:  # pragma: no cover
                 continue
 
             if cmd_idx >= len(cmds):
