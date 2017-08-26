@@ -1,10 +1,10 @@
 import os
-import shutil
 import subprocess
 import json
 import tempfile
 
 import pytest
+import six
 from conda_shell import main
 from conda_shell import conda_cli
 
@@ -34,7 +34,14 @@ def tmp_dir():
     Return the tempfile.TemporaryDirectory directory object.
     Directory is automatically removed after the test finishes.
     """
-    tmpdir = tempfile.TemporaryDirectory()
+    if six.PY2:
+        # Python 2.7 has no tempfile.TemporaryDirectory
+        import shutil
+        tmpdir_dpath = tempfile.mkdtemp()
+        tmpdir = mock.Mock(spec=tempfile.TemporaryDirectory, cleanup=lambda: shutil.rmtree(tmpdir_dpath))
+        tmpdir.name = tmpdir_dpath # "name" attr is a special case for Mock
+    else:
+        tmpdir = tempfile.TemporaryDirectory()
     yield tmpdir
     tmpdir.cleanup()
 
