@@ -39,7 +39,7 @@ def tmp_dir():
         import shutil
         import mock
         tmpdir_dpath = tempfile.mkdtemp()
-        tmpdir = mock.Mock(spec=tempfile.TemporaryDirectory, cleanup=lambda: shutil.rmtree(tmpdir_dpath))
+        tmpdir = mock.Mock(cleanup=lambda: shutil.rmtree(tmpdir_dpath))
         tmpdir.name = tmpdir_dpath # "name" attr is a special case for Mock
     else:
         tmpdir = tempfile.TemporaryDirectory()
