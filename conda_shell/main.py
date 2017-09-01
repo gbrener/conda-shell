@@ -110,8 +110,10 @@ def get_conda_env_dirs():
     conda-shell.
     """
     conda_info_cmd = ['conda', 'info', '--envs', '--json']
-    envs = json.loads(subprocess.check_output(conda_info_cmd,
-                                              universal_newlines=True))['envs']
+    conda_info = json.loads(subprocess.check_output(conda_info_cmd,
+                                                    universal_newlines=True))
+    print('@@@@@ conda_info:', conda_info)
+    envs = conda_info['envs']
     env_dpaths = sorted(filter(is_shell_env, envs),
                         key=lambda dpath: os.path.getmtime(dpath),
                         reverse=True)

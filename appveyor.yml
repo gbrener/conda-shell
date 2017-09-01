@@ -5,9 +5,6 @@ branches:
   only:
     - master
 
-cache:
-  - C:\conda_pkg_cache
-
 environment:
   global:
     PYTHON: "C:\\conda"
@@ -26,12 +23,10 @@ platform:
 
 install:
   - "git fetch --tags"
-  - "md C:\\conda_pkg_cache"
   - "git clone git://github.com/astropy/ci-helpers.git"
   - "powershell ci-helpers/appveyor/install-miniconda.ps1"
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "deactivate"
-  - "robocopy C:\\conda_pkg_cache %PYTHON%\\pkgs || exit 0"
   - "conda config --set always_yes yes --set changeps1 no"
   - "conda install -n root python=%PYTHON_VERSION% conda-build anaconda-client"
 
@@ -39,4 +34,3 @@ build: false
 
 test_script:
   - "conda build conda.recipe --no-anaconda-upload --python=%PYTHON_VERSION%"
-  - "robocopy %PYTHON%\\pkgs C:\\conda_pkg_cache || exit 0"
