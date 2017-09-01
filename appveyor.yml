@@ -30,4 +30,4 @@ install:
 build: false
 
 test_script:
-  - "conda build conda.recipe --no-anaconda-upload --python=%PYTHON_VERSION%"
+  - "%CMD_IN_ENV% conda build conda.recipe --no-anaconda-upload --python=%PYTHON_VERSION%"
