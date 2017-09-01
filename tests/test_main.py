@@ -249,7 +249,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell properly matches environments to sets of
         packages.
         """
-        env_name = '__testme_shell_a5c7c52587ad457c9d1cdc8a36e3eee8'
+        env_name = 'testme_shell_a5c7c52587ad457c9d1cdc8a36e3eee8'
         env_dpath = os.path.join(tmp_dir.name, env_name)
         conda_meta_dpath = os.path.join(env_dpath, 'conda-meta')
         os.makedirs(conda_meta_dpath)

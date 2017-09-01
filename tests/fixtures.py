@@ -15,8 +15,8 @@ def remove_shell_envs():
     # Use an alternate environment prefix to distinguish between the
     # environments only used for testing
     base_env = os.environ.copy()
-    base_env['CONDA_SHELL_ENV_PREFIX'] = '__testme_shell_'
-    main.DEFAULT_ENV_PREFIX = '__testme_shell_'
+    base_env['CONDA_SHELL_ENV_PREFIX'] = 'testme_shell_'
+    main.DEFAULT_ENV_PREFIX = 'testme_shell_'
     shell_envs_json = subprocess.check_output('conda info --envs --json',
                                               universal_newlines=True,
                                               shell=True)
@@ -51,5 +51,5 @@ def cli():
     """Return an instance of conda_shell.conda_cli.CondaShellCLI"""
     # Use an alternate environment prefix to distinguish between the
     # environments only used for testing
-    main.DEFAULT_ENV_PREFIX = '__testme_shell_'
+    main.DEFAULT_ENV_PREFIX = 'testme_shell_'
     return conda_cli.CondaShellCLI()
