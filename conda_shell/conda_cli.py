@@ -39,6 +39,12 @@ class CondaCLI(object):
         # Extend sys.path so that conda.cli module can be imported, then import
         # conda's CLI modules.
         self.conda_sp_dpath = self._get_conda_sp_dpath()
+        self.prefix_dpath = os.path.join(
+            os.path.split(os.path.split(os.path.split(
+                self.conda_sp_dpath
+            )[0])[0])[0],
+            'envs',
+        )
         (self._base_mod,
          self._main_mod,
          self._main_install_mod,
@@ -141,9 +147,7 @@ class CondaCLI(object):
         """Given a Namespace object from `conda create`'s argument parser,
         return the output from the `conda create` command (this may be `None`).
         """
-        prefix = os.path.join(os.path.split(os.path.split(os.path.split(
-            self.conda_sp_dpath
-        )[0])[0])[0], 'envs', args.name)
+        prefix = os.path.join(self.prefix_dpath, args.name)
         # The following is needed to satisfy conda Context object
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
         self._base_mod.context.context.__init__(
@@ -170,9 +174,7 @@ class CondaCLI(object):
         return the output from the `conda install` command (this may be
         `None`).
         """
-        prefix = os.path.join(os.path.split(os.path.split(os.path.split(
-            self.conda_sp_dpath
-        )[0])[0])[0], 'envs', args.name)
+        prefix = os.path.join(self.prefix_dpath, args.name)
         # The following is needed to satisfy conda Context object
         self._base_mod.context.get_prefix = lambda *args, **kwargs: prefix
         self._base_mod.context.context.__init__(

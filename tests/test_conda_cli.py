@@ -49,7 +49,7 @@ class TestCondaShellCLI(object):
         args = cli.parse_create_args(argv)
         args._argv = argv
         cli.conda_create(args)
-        env_dirs = main.get_conda_env_dirs()
+        env_dirs = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs) == 1
         assert os.path.basename(env_dirs[0]) == env_name
 

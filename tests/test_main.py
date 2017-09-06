@@ -217,8 +217,10 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell properly identifies conda environment
         directories.
         """
+        cli = conda_cli.CondaShellCLI()
+
         main.main(['conda-shell', 'python=2.7', '--run', 'echo'])
-        env_dirs = main.get_conda_env_dirs()
+        env_dirs = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs) == 1
         assert all(map(lambda env_dir: os.path.isdir(env_dir), env_dirs))
         assert all(map(lambda env_dir:
@@ -226,7 +228,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
                        env_dirs))
 
         main.main(['conda-shell', 'python=3.5', '--run', 'echo'])
-        env_dirs = main.get_conda_env_dirs()
+        env_dirs = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs) == 2
         assert all(map(lambda env_dir: os.path.isdir(env_dir), env_dirs))
         assert all(map(lambda env_dir:
@@ -235,7 +237,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         assert os.path.getmtime(env_dirs[0]) > os.path.getmtime(env_dirs[1])
 
         main.main(['conda-shell', 'python=3.6', '--run', 'echo'])
-        env_dirs = main.get_conda_env_dirs()
+        env_dirs = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs) == 3
         assert all(map(lambda env_dir: os.path.isdir(env_dir), env_dirs))
         assert all(map(lambda env_dir:
@@ -278,17 +280,19 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell reuses environments that already satisfy
         package dependencies.
         """
+        cli = conda_cli.CondaShellCLI()
+
         start_tm = time.time()
         main.main(
             ['conda-shell', 'python=2.7', 'bzip2', 'pandas', '--run', 'echo']
         )
         end_tm = time.time()
         first_tdiff = end_tm - start_tm
-        env_dirs_first = main.get_conda_env_dirs()
+        env_dirs_first = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_first) == 1
 
         main.main(['conda-shell', 'python=3.5', '--run', 'echo'])
-        env_dirs_second = main.get_conda_env_dirs()
+        env_dirs_second = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_second) == 2
 
         start_tm = time.time()
@@ -297,7 +301,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         )
         end_tm = time.time()
         second_tdiff = end_tm - start_tm
-        env_dirs_third = main.get_conda_env_dirs()
+        env_dirs_third = main.get_conda_env_dirs(cli.prefix_dpath)
         assert env_dirs_third == env_dirs_second
 
         # env reuse should save us at least 5 seconds
@@ -307,6 +311,8 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell reuses environments that already satisfy
         package dependencies.
         """
+        cli = conda_cli.CondaShellCLI()
+
         tempfd = tempfile.NamedTemporaryFile(mode='w', delete=False)
         tempfd.write('''#!/usr/bin/env conda-shell
 #!conda-shell -i python python=3.6 numpy=1.12
@@ -325,7 +331,7 @@ import numpy as np
                               env=remove_shell_envs)
         end_tm = time.time()
         first_tdiff = end_tm - start_tm
-        env_dirs_first = main.get_conda_env_dirs()
+        env_dirs_first = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_first) == 1
 
         tempfd = tempfile.NamedTemporaryFile(mode='w', delete=False)
@@ -341,7 +347,7 @@ import numpy as np
                               universal_newlines=True,
                               env=remove_shell_envs)
         end_tm = time.time()
-        env_dirs_second = main.get_conda_env_dirs()
+        env_dirs_second = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_second) == 2
 
         tempfd = tempfile.NamedTemporaryFile(mode='w', delete=False)
@@ -362,7 +368,7 @@ import numpy as np
                               env=remove_shell_envs)
         end_tm = time.time()
         second_tdiff = end_tm - start_tm
-        env_dirs_third = main.get_conda_env_dirs()
+        env_dirs_third = main.get_conda_env_dirs(cli.prefix_dpath)
         assert env_dirs_third == env_dirs_second
 
         # env reuse should save us at least 5 seconds
