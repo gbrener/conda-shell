@@ -280,7 +280,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell reuses environments that already satisfy
         package dependencies.
         """
-        cli = CondaShellCLI()
+        cli = conda_cli.CondaShellCLI()
 
         start_tm = time.time()
         main.main(
@@ -311,7 +311,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell reuses environments that already satisfy
         package dependencies.
         """
-        cli = CondaShellCLI()
+        cli = conda_cli.CondaShellCLI()
 
         tempfd = tempfile.NamedTemporaryFile(mode='w', delete=False)
         tempfd.write('''#!/usr/bin/env conda-shell

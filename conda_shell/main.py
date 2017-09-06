@@ -137,7 +137,7 @@ def env_has_pkgs(env_dpath, cmds, cli):
             elif hist_ln.startswith('conda install'):
                 hist_argv = shlex.split(hist_ln)[2:]
                 hist_args = cli.parse_install_args(hist_argv)
-            else:  # pragma: no cover
+            else:
                 continue
 
             if cmd_idx >= len(cmds):
@@ -186,7 +186,7 @@ def run_cmds_in_env(cmds, cli, argv, in_shebang=False):
             if os.path.basename(env_dpath) == cmds[0].name:
                 found_env = True
                 break
-        if not found_env:  # pragma: no cover
+        if not found_env:
             raise ValueError('Could not find freshly-created environment named'
                              ' "{}"'.format(cmds[0].name))
 
