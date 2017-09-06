@@ -45,7 +45,7 @@ class InteractiveShell(cmd.Cmd):
         self.env = (os.environ.copy() if env is None
                     else env)
 
-    def default(self, line):  # pragma: no cover
+    def default(self, line):
         if line == 'EOF':
             print('\nExiting conda-shell...', file=sys.stderr)
             return True

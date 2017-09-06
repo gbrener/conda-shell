@@ -11,7 +11,6 @@ import re
 import subprocess
 import uuid
 import shlex
-import json
 import copy
 
 from .conda_cli import CondaShellCLI, CondaShellArgumentError
@@ -102,17 +101,16 @@ def parse_script_cmds(script_fpath, cli):
     return conda_cmds
 
 
-def get_conda_env_dirs():
+def get_conda_env_dirs(prefix):
     """Return an iterable which yields strings representing the directory paths
     to all conda environments created by conda-shell, in descending order by
     last-modification time (recently modified come first). The `is_shell_env`
     function is used to determine whether the environment was created by
     conda-shell.
     """
-    conda_info_cmd = ['conda', 'info', '--envs', '--json']
-    envs = json.loads(subprocess.check_output(conda_info_cmd,
-                                              universal_newlines=True))['envs']
-    env_dpaths = sorted(filter(is_shell_env, envs),
+    envs = os.listdir(prefix)
+    env_dpaths = sorted(map(lambda env: os.path.join(prefix, env),
+                            filter(is_shell_env, envs)),
                         key=lambda dpath: os.path.getmtime(dpath),
                         reverse=True)
     return env_dpaths
@@ -139,7 +137,7 @@ def env_has_pkgs(env_dpath, cmds, cli):
             elif hist_ln.startswith('conda install'):
                 hist_argv = shlex.split(hist_ln)[2:]
                 hist_args = cli.parse_install_args(hist_argv)
-            else:  # pragma: no cover
+            else:
                 continue
 
             if cmd_idx >= len(cmds):
@@ -164,27 +162,31 @@ def run_cmds_in_env(cmds, cli, argv, in_shebang=False):
     env_vars = os.environ.copy()
 
     # If there is an environment we can reuse, then find/activate it
-    env_to_reuse = None
-    env_dpaths = get_conda_env_dirs()
-    for env_dpath in env_dpaths:
-        if env_has_pkgs(env_dpath, cmds, cli):
-            env_to_reuse = os.path.basename(env_dpath)
-            print('Reusing shell env "{}"...'.format(env_to_reuse),
-                  file=sys.stderr)
-            break
+    env_to_reuse = os.environ.get('CONDA_SHELL_ENV_NAME', None)
+    if env_to_reuse is None:
+        env_dpaths = get_conda_env_dirs(cli.prefix_dpath)
+        for env_dpath in env_dpaths:
+            if env_has_pkgs(env_dpath, cmds, cli):
+                env_to_reuse = os.path.basename(env_dpath)
+                print('Reusing shell env "{}"...'.format(env_to_reuse),
+                      file=sys.stderr)
+                env_vars['CONDA_SHELL_ENV_NAME'] = env_to_reuse
+                break
 
     # Existing environment was not found, so create a fresh one.
     if env_to_reuse is None:
+        print('Creating new environment "{}"...'.format(cmds[0].name),
+              file=sys.stderr)
         cli.conda_create(cmds[0])
         for cmd in cmds[1:]:
             cli.conda_install(cmd)
         found_env = False
-        env_dpaths = get_conda_env_dirs()
+        env_dpaths = get_conda_env_dirs(cli.prefix_dpath)
         for env_dpath in env_dpaths:
             if os.path.basename(env_dpath) == cmds[0].name:
                 found_env = True
                 break
-        if not found_env:  # pragma: no cover
+        if not found_env:
             raise ValueError('Could not find freshly-created environment named'
                              ' "{}"'.format(cmds[0].name))
 
