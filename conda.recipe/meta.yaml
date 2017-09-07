@@ -29,7 +29,7 @@ test:
 
   commands:
     - pytest --cov=conda_shell --cov-report term-missing -x $SP_DIR/tests  # [unix]
-    - pytest --cov=conda_shell --cov-report term-missing %SP_DIR%/tests  # [win]
+    - pytest --cov=conda_shell --cov-report term-missing -x %SP_DIR%/tests  # [win]
     - which conda-shell
 
 about:
