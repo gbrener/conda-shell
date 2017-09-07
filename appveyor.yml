@@ -10,11 +10,11 @@ branches:
 environment:
   matrix:
     - PYTHON_VERSION: 2.7
-      MINICONDA: C:\Miniconda27
+      MINICONDA: C:\Miniconda
     - PYTHON_VERSION: 3.5
-      MINICONDA: C:\Miniconda35
+      MINICONDA: C:\Miniconda3
     - PYTHON_VERSION: 3.6
-      MINICONDA: C:\Miniconda36
+      MINICONDA: C:\Miniconda3
 
 init:
   - git config --global core.autocrlf input
