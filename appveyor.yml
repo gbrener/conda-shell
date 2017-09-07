@@ -1,0 +1,29 @@
+build: false
+
+matrix:
+  fast_finish: true
+
+branches:
+  only:
+    - master
+
+environment:
+  matrix:
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - "conda install -n root python=%PYTHON_VERSION% conda-build anaconda-client"
+
+test_script:
+  - "conda build conda.recipe --no-anaconda-upload --python=%PYTHON_VERSION%"

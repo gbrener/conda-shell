@@ -251,7 +251,7 @@ print(f\'np.arange(10): {np.arange(10)}\')
         """Test that conda-shell properly matches environments to sets of
         packages.
         """
-        env_name = '__testme_shell_a5c7c52587ad457c9d1cdc8a36e3eee8'
+        env_name = 'testme_shell_a5c7c52587ad457c9d1cdc8a36e3eee8'
         env_dpath = os.path.join(tmp_dir.name, env_name)
         conda_meta_dpath = os.path.join(env_dpath, 'conda-meta')
         os.makedirs(conda_meta_dpath)
@@ -323,13 +323,19 @@ import numpy as np
 ''')
         tempfd.flush()
         tempfd.close()
-        stats = os.stat(tempfd.name)
-        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-        start_tm = time.time()
-        subprocess.check_call([tempfd.name],
-                              universal_newlines=True,
-                              env=remove_shell_envs)
-        end_tm = time.time()
+        if not WIN:
+            stats = os.stat(tempfd.name)
+            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+            start_tm = time.time()
+            subprocess.check_call([tempfd.name],
+                                  universal_newlines=True,
+                                  env=remove_shell_envs)
+            end_tm = time.time()
+        else:
+            start_tm = time.time()
+            cmds = main.parse_script_cmds(tempfd.name, cli)
+            main.run_cmds_in_env(cmds, cli, [tempfd.name], in_shebang=True)
+            end_tm = time.time()
         first_tdiff = end_tm - start_tm
         env_dirs_first = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_first) == 1
@@ -340,13 +346,19 @@ import numpy as np
 ''')
         tempfd.flush()
         tempfd.close()
-        stats = os.stat(tempfd.name)
-        os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
-        start_tm = time.time()
-        subprocess.check_call([tempfd.name],
-                              universal_newlines=True,
-                              env=remove_shell_envs)
-        end_tm = time.time()
+        if not WIN:
+            stats = os.stat(tempfd.name)
+            os.chmod(tempfd.name, stats.st_mode | stat.S_IEXEC)
+            start_tm = time.time()
+            subprocess.check_call([tempfd.name],
+                                  universal_newlines=True,
+                                  env=remove_shell_envs)
+            end_tm = time.time()
+        else:
+            start_tm = time.time()
+            cmds = main.parse_script_cmds(tempfd.name, cli)
+            main.run_cmds_in_env(cmds, cli, [tempfd.name], in_shebang=True)
+            end_tm = time.time()
         env_dirs_second = main.get_conda_env_dirs(cli.prefix_dpath)
         assert len(env_dirs_second) == 2
 
